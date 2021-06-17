@@ -1,3 +1,3 @@
 ## Herramientas Computacionales
 
-### Entrega de tareas grupo: Bullano Maria Emilia y Gaston Garcia Zavaleta
+### Entrega de tareas grupo: Bullano Maria Emilia y Garcia Zavaleta Gaston 
