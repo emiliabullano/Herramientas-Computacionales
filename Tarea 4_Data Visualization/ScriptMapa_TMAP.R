@@ -1,3 +1,7 @@
+# Tarea Data Visualization
+# Herramientas Computacionales para la investigación
+# Maria Emilia Bullano y Gastón García Zavaleta
+
 rm(list=ls())
 
 setwd("E:/Desktop/Emilia/Maestria UdeSA/Herramientas Computacionales/Data visualization/videos 2 y 3/videos 2 y 3")
@@ -81,7 +85,7 @@ map_tmap <- tm_shape(raster$layer.1) +
             inner.margins = 0,
             legend.title.size = 0.8,
             legend.frame = F,
-            main.title = "Robos cada 1000 habitantes seg�n districtos en Londres",
+            main.title = "Robos cada 1000 habitantes según districtos en Londres",
             main.title.position = c("center", "top"),
             main.title.size = 1.1)+
   tm_scale_bar(position= c("right", "bottom"), breaks = c(0,5,10),text.size = 0.6)
