@@ -2,6 +2,6 @@
 
 ### En esta carpeta se encuentran los siguientes archivos:
   #### PDF con corrección de gráficos: Tarea_4__Corrección_Gráficos.pdf.pdf
-  #### Codigo corrección de gráficos: Correción de gráficos.R
+  #### Codigo con corrección de gráficos: Correción de gráficos.R
 
 
