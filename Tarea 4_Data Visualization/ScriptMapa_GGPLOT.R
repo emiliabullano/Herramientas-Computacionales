@@ -83,7 +83,7 @@ map_ggplot = ggmap(basemap, alpha=0.5) +
         plot.title = element_text(hjust = 0.5)) +
   xlab("") + ylab("") + 
   labs(fill = "Robos c/ 1000 hab.", 
-       title = "Robos cada 1000 habitantes según districtos de Londres") +
+       title = "Robos cada 1000 habitantes según distrito de Londres") +
   scalebar(lnd_4326, location = "bottomleft", dist=5, dist_unit = "km", model = "WGS84",
            transform = T, st.bottom = T) +
   scale_fill_gradientn(colours = c("#FFFFFF", "#FC9272", "#FB6A4A", "#EF3B2C", "#e34a33", "red"),
