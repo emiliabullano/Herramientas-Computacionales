@@ -1,8 +1,8 @@
 ### Tarea realizada por Maria Emilia Bullano y Gastón García Zavaleta.
 
-### Archivos
-  #### PDF con corrección de gráficos: XXXXX.pdf
-  #### Codigo corrección de gráficos: 
+### En esta carpeta se encuentran los siguientes archivos:
+  #### PDF con corrección de gráficos: Tarea_4__Corrección_Gráficos.pdf.pdf
+  #### Codigo corrección de gráficos: Correción de gráficos.R
 
   #### Mapa con librería GGPLOT en R:   Mapa_ggplot.jpeg
   #### Código con librería GGPLOT en R: ScriptMapa_GGPLOT.R
