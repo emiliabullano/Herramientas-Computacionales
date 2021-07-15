@@ -85,7 +85,7 @@ map_tmap <- tm_shape(raster$layer.1) +
             inner.margins = 0,
             legend.title.size = 0.8,
             legend.frame = F,
-            main.title = "Robos cada 1000 habitantes según districtos en Londres",
+            main.title = "Robos cada 1000 habitantes según distrito en Londres",
             main.title.position = c("center", "top"),
             main.title.size = 1.1)+
   tm_scale_bar(position= c("right", "bottom"), breaks = c(0,5,10),text.size = 0.6)
