@@ -4,7 +4,11 @@ Name : modelo2
 Group : 
 With QGIS : 31608
 """
+##########################################################################################
+################################ MODELO 2 ################################################
+##########################################################################################
 
+############ SE IMPORTAN LOS PAQUETES PARA TRABAJAR EN QGIS ##############
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
@@ -12,7 +16,7 @@ from qgis.core import QgsProcessingParameterRasterDestination
 from qgis.core import QgsCoordinateReferenceSystem
 import processing
 
-
+###### ABRIMOS EL RASTER ########
 class Modelo2(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
@@ -26,6 +30,7 @@ class Modelo2(QgsProcessingAlgorithm):
         outputs = {}
 
         # Combar (reproyectar)
+        # Reproyectamos a WGS84 (EPSG_4326)
         alg_params = {
             'DATA_TYPE': 0,
             'EXTRA': '',
