@@ -1,3 +1,7 @@
+#########################################################################################
+####################                    Modelo 1                     ####################
+#########################################################################################
+
 """
 Model exported as python.
 Name : modelo1
@@ -5,12 +9,15 @@ Group :
 With QGIS : 31608
 """
 
+
+#########################################################################################
+# Importamos las funciones que vamos a necesitar
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterFeatureSink
 import processing
-
+#########################################################################################
 
 class Modelo1(QgsProcessingAlgorithm):
 
@@ -29,7 +36,9 @@ class Modelo1(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Quitar campo(s)
+#########################################################################################
+###                    Quitamos las variables que no vamos a usar                     ###
+#########################################################################################
         alg_params = {
             'COLUMN': ['ID_ISO_A3','ID_ISO_A2','ID_FIPS','NAM_LABEL','NAME_PROP','NAME2','NAM_ANSI','CNT','C1','POP','LMP_POP1','G','LMP_CLASS','FAMILYPROP','FAMILY','langpc_km2','length'],
             'INPUT': 'Calculado_b253be02_a6d5_446c_83f2_33ece48b0318',
@@ -42,7 +51,9 @@ class Modelo1(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Corregir geometrías
+#########################################################################################
+###                             Corregimos las geometrías                             ###
+#########################################################################################
         alg_params = {
             'INPUT': 'langa_4c55e7a9_ca84_4b17_b41c_8dd16e06f57b',
             'OUTPUT': parameters['Geometras_corr']
