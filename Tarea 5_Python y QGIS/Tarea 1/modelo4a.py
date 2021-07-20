@@ -1,15 +1,21 @@
+##########################################################################################
+################################ MODELO 4A ################################################
+##########################################################################################
 """
 Model exported as python.
 Name : modelo4a
 Group : 
 With QGIS : 31608
 """
-
+#########################################################################################
+###                   Importamos las funciones que vamos a necesitar                  ###
+#########################################################################################
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterFeatureSink
 import processing
+#########################################################################################
 
 
 class Modelo4a(QgsProcessingAlgorithm):
@@ -26,7 +32,11 @@ class Modelo4a(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Corregir geometrías wlds
+#########################################################################################
+###                             Corregimos las geometrías                             ###
+#########################################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
         alg_params = {
             'INPUT': 'clean_1e98a9a0_d52b_4791_a02d_53e356ed3b6b',
             'OUTPUT': parameters['Fixgeo_wlds']
@@ -37,8 +47,13 @@ class Modelo4a(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Estadísticas por categorías
+
+
+#########################################################################################
+###              Calculamos la media de la variable "ADMIN" por polígono              ###
+#########################################################################################
         alg_params = {
             'CATEGORIES_FIELD_NAME': ['ADMIN'],
             'INPUT': 'Intersección_c8ba2631_67f6_48a3_ad27_90c4bb803bcb',
@@ -52,7 +67,11 @@ class Modelo4a(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Corregir geometrías countries
+#########################################################################################
+###                             Corregimos las geometrías                             ###
+#########################################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
         alg_params = {
             'INPUT': 'ne_10m_admin_0_countries_ed83962c_4da8_4d95_bf84_dd5271df5d0f',
             'OUTPUT': parameters['Fixgeo_countries']
