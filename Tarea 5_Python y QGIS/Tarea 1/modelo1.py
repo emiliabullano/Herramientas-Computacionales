@@ -38,8 +38,10 @@ class Modelo1(QgsProcessingAlgorithm):
         outputs = {}
 
 #########################################################################################
-###                    Quitamos las variables que no vamos a usar                     ###
+###                    Quitamos las variables que no vamos a usar                     ###                        
 #########################################################################################
+# Se eliminan las variables en 'COLUMN' de la capa en 'INPUT'. Capa resultado en 'OUTPUT'
+
         alg_params = {
             'COLUMN': ['ID_ISO_A3','ID_ISO_A2','ID_FIPS','NAM_LABEL','NAME_PROP','NAME2','NAM_ANSI','CNT','C1','POP','LMP_POP1','G','LMP_CLASS','FAMILYPROP','FAMILY','langpc_km2','length'],
             'INPUT': 'Calculado_b253be02_a6d5_446c_83f2_33ece48b0318',
@@ -60,6 +62,7 @@ class Modelo1(QgsProcessingAlgorithm):
 #########################################################################################
 # Es importante realizar este paso para evitar problemas como polígonos que se superponen
 # o polígonos que no están cerrados.
+
         alg_params = {
             'INPUT': 'langa_4c55e7a9_ca84_4b17_b41c_8dd16e06f57b',
             'OUTPUT': parameters['Geometras_corr']
@@ -75,9 +78,12 @@ class Modelo1(QgsProcessingAlgorithm):
 
 
 #########################################################################################
-###                         Guardamos la base creada como csv                         ###
+###                         Guardamos la base creada como shp                         ###
 #########################################################################################
-        alg_params = {
+# La ruta donde se guarda en 'OUTPUT' y la capa a guardar es 'INPUT'
+# Se pueden configurar con otras extensiones (csv, shp, gpkg, entre otras)
+
+alg_params = {
             'DATASOURCE_OPTIONS': '',
             'INPUT': 'Campos_restantes_13ab7cca_e998_4e86_a240_0f32f7c50773',
             'LAYER_NAME': '',
@@ -115,7 +121,11 @@ class Modelo1(QgsProcessingAlgorithm):
 ###   Calculamos la cantidad de caracteres de la variable "NAME_PROP" para cada obs   ###
 ###   A la variable que contiene el resultado de este cálculo la llamamos "length"    ###
 #########################################################################################
-        alg_params = {
+# nombre de la nueva variable 'FIELD_NAME'
+# Capa sobre la cual realizar la variable 'INPUT'
+# Capa resultado ''OUTPUT
+    
+    alg_params = {
             'FIELD_LENGTH': 2,
             'FIELD_NAME': 'length',
             'FIELD_PRECISION': 0,
@@ -159,7 +169,9 @@ class Modelo1(QgsProcessingAlgorithm):
 #########################################################################################
 ###     Creamos un campo de nombre "GID" que se autoincrementa (para numerar obs)     ###
 #########################################################################################
-        alg_params = {
+# Valor sobre el cual empieza a autoincrementarse 'START'
+
+    alg_params = {
             'FIELD_NAME': 'GID',
             'GROUP_FIELDS': [''],
             'INPUT': 'Geometrías_corregidas_3d10f768_e0d9_422f_8a5f_249e111de595',
