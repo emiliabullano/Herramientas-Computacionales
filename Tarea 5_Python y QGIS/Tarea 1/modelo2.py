@@ -16,7 +16,7 @@ from qgis.core import QgsProcessingParameterRasterDestination
 from qgis.core import QgsCoordinateReferenceSystem
 import processing
 
-###### ABRIMOS EL RASTER ########
+# ABRIMOS EL RASTER 
 class Modelo2(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
@@ -30,7 +30,7 @@ class Modelo2(QgsProcessingAlgorithm):
         outputs = {}
 
         # Combar (reproyectar)
-        # Reproyectamos a WGS84 (EPSG_4326)
+        # Reproyectamos a WGS84 - Sistema de coordenadas EPSG_4326- ('SOURCE_CRS')
         alg_params = {
             'DATA_TYPE': 0,
             'EXTRA': '',
