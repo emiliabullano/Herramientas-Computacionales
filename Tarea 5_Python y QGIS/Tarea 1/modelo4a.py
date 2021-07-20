@@ -83,7 +83,8 @@ class Modelo4a(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Intersección
+        # Intersección entre capaz de paises ('OVERLAY') y mundo ('INPUT') para pegar variable ADMIN ('OVERLAY_FIELDS')
+        
         alg_params = {
             'INPUT': outputs['CorregirGeometrasWlds']['OUTPUT'],
             'INPUT_FIELDS': ['GID'],
