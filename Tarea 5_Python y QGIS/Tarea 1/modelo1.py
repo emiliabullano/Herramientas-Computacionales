@@ -11,7 +11,8 @@ With QGIS : 31608
 
 
 #########################################################################################
-# Importamos las funciones que vamos a necesitar
+###                   Importamos las funciones que vamos a necesitar                  ###
+#########################################################################################
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
@@ -50,10 +51,15 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+#########################################################################################
+
+
 
 #########################################################################################
 ###                             Corregimos las geometrías                             ###
 #########################################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
         alg_params = {
             'INPUT': 'langa_4c55e7a9_ca84_4b17_b41c_8dd16e06f57b',
             'OUTPUT': parameters['Geometras_corr']
@@ -64,8 +70,13 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Save vector features to file
+
+
+#########################################################################################
+###                         Guardamos la base creada como csv                         ###
+#########################################################################################
         alg_params = {
             'DATASOURCE_OPTIONS': '',
             'INPUT': 'Campos_restantes_13ab7cca_e998_4e86_a240_0f32f7c50773',
@@ -79,8 +90,13 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Filtro de entidad
+
+
+#########################################################################################
+###   Nos quedamos con las observaciones cuyo nombre tiene menos de 11 caracteres     ###
+#########################################################################################
         alg_params = {
             'INPUT': 'Calculado_145a32e9_d777_42e2_93f6_a9094f26ed8f',
             'OUTPUT_menor_a_11': parameters['Output_menor_a_11']
@@ -91,8 +107,14 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos
+
+
+#########################################################################################
+###   Calculamos la cantidad de caracteres de la variable "NAME_PROP" para cada obs   ###
+###   A la variable que contiene el resultado de este cálculo la llamamos "length"    ###
+#########################################################################################
         alg_params = {
             'FIELD_LENGTH': 2,
             'FIELD_NAME': 'length',
@@ -108,8 +130,13 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(5)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Field calculator clone
+
+
+#########################################################################################
+###           Clonamos la variable "OUTPUT_menor_a_11" y la llamamos "lmn"            ###
+#########################################################################################
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'lmn',
@@ -125,8 +152,13 @@ class Modelo1(QgsProcessingAlgorithm):
         feedback.setCurrentStep(6)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Agregar campo que auto-incrementa 
+
+
+#########################################################################################
+###     Creamos un campo de nombre "GID" que se autoincrementa (para numerar obs)     ###
+#########################################################################################
         alg_params = {
             'FIELD_NAME': 'GID',
             'GROUP_FIELDS': [''],
@@ -140,6 +172,8 @@ class Modelo1(QgsProcessingAlgorithm):
         outputs['AgregarCampoQueAutoincrementa'] = processing.run('native:addautoincrementalfield', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Geometrias_corr_inc'] = outputs['AgregarCampoQueAutoincrementa']['OUTPUT']
         return results
+#########################################################################################
+
 
     def name(self):
         return 'modelo1'
