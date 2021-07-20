@@ -20,9 +20,9 @@ import processing
 
 
 class Modelo3(QgsProcessingAlgorithm):
-        ####################################
-        # SE LEVANTAN LAS BASES A UTILIZAR #
-        ####################################
+############################################################################
+###         SE ABREN LAS BASES DE DATOS QUE VAMOS A UTILIZAR             ###
+############################################################################
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFeatureSink('Fixgeo_3', 'fixgeo_3', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('Landq', 'landq', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
@@ -32,17 +32,15 @@ class Modelo3(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterFeatureSink('Drop_fields_3', 'drop_fields_3', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
-        # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
-        # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(7, model_feedback)
         results = {}
         outputs = {}
-        
-        ###########################################################
-        ###                  Estadísticas de zona               ###
-        # Media ('STATISTICS': [2]) por poligono - Poblacion_2000 #
-        ###########################################################
-        
+############################################################################
+
+
+############################################################################
+###     Calculamos la media de la variable "Pop_2000" por polígono       ###
+############################################################################
         alg_params = {
             'COLUMN_PREFIX': 'pop2000',
             'INPUT': 'Estadistica_zonal_ff4bfe49_f056_4b0e_9976_a611b5cdb857',
@@ -53,16 +51,19 @@ class Modelo3(QgsProcessingAlgorithm):
         }
         outputs['EstadsticasDeZona'] = processing.run('native:zonalstatisticsfb', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Zonalstatistics'] = outputs['EstadsticasDeZona']['OUTPUT']
+############################################################################
+
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
 
-        ###########################################################
-        ###                  Corregir geometrías                ###
-        #     Se corrigen geometrias para que los poligonos       #
-        #       no esten superpuestos y/o mal definidos           #
-        ###########################################################
+
+############################################################################
+###                      Corregimos las geometrías                       ###
+############################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
          
         alg_params = {
             'INPUT': 'ne_10m_admin_0_countries_34521fae_600f_4aef_9554_c58dc6a7e5e8',
@@ -74,11 +75,14 @@ class Modelo3(QgsProcessingAlgorithm):
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
+############################################################################.
 
-        ###########################################################
-        ###                  Quitar campo(s)                    ###
-        #     Se eliminan las variables que están en 'COLUMN'     #
-        ###########################################################
+
+
+############################################################################
+###                            Quitamos campos                           ###
+############################################################################
+# Quitamos las variables que se encuentran en la lista "COLUMN".
 
         alg_params = {
             'COLUMN': ['featurecla','scalerank','LABELRANK','SOVEREIGNT','SOV_A3','ADM0_DIF','LEVEL','TYPE','ADM0_A3','GEOU_DIF','GEOUNIT','GU_A3','SU_DIF','SUBUNIT','SU_A3','BRK_DIFF','NAME','NAME_LONG','BRK_A3','BRK_NAME','BRK_GROUP','ABBREV','POSTAL','FORMAL_EN','FORMAL_FR','NAME_CIAWF','NOTE_ADM0','NOTE_BRK','NAME_SORT','NAME_ALT','MAPCOLOR7','MAPCOLOR8','APCOLOR9','MAPCOLOR13','POP_EST','POP_RANK','GDP_MD_EST','POP_YEAR','LASTCENSUS','GDP_YEAR','ECONOMY','INCOME_GRP','WIKIPEDIA','FIPS_10_','ISO_A2','ISO_A3_EH','ISO_N3','UN_A3','WB_A2','WB_A3','WOE_ID','WOE_ID_EH','WOE_NOTE','ADM0_A3_IS','ADM0_A3_US','ADM0_A3_UN','ADM0_A3_WB','CONTINENT','REGION_UN','SUBREGION','REGION_WB','NAME_LEN','LONG_LEN','ABBREV_LEN','TINY','HOMEPART','MIN_ZOOM','MIN_LABEL','MAX_LABEL','NE_ID','WIKIDATAID','NAME_AR','NAME_BN','NAME_DE','NAME_EN','NAME_ES','NAME_FR','NAME_EL','NAME_HI','NAME_HU','NAME_ID','NAME_IT','NAME_JA','NAME_KO','NAME_NL','NAME_PL','NAME_PT','NAME_RU','NAME_SV','NAME_TR','NAME_VI','NAME_ZH','MAPCOLOR9'],
@@ -91,13 +95,15 @@ class Modelo3(QgsProcessingAlgorithm):
         feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
+############################################################################
 
-        ###########################################################
-        ###          Save vector features to file               ###
-        #     Se guarda el archivo remanente ('INPUT')            #
-        #         en formato .csv (pueden ser otros)              #
-        #       Se asigna la ruta y el nombre en 'OUTPUT'         #
-        ###########################################################
+
+
+############################################################################
+###                Guardamos la base creada en formato csv               ###
+############################################################################
+# Se guarda el archivo remanente ('INPUT') en formato .csv (pueden ser otros)              
+# Se asigna la ruta y el nombre en 'OUTPUT
         
         alg_params = {
             'DATASOURCE_OPTIONS': '',
@@ -112,11 +118,13 @@ class Modelo3(QgsProcessingAlgorithm):
         feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
-        
-        ###########################################################
-        ###                  Estadísticas de zona               ###
-        # Media ('STATISTICS': [2]) por poligono - Landquality    #
-        ###########################################################
+############################################################################
+
+
+
+############################################################################
+###    Calculamos la media de la variable "Landquality" por polígono     ###
+############################################################################
         
         alg_params = {
             'COLUMN_PREFIX': 'landq',
@@ -133,10 +141,9 @@ class Modelo3(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
         
-        ###########################################################
-        ###                  Estadísticas de zona               ###
-        # Media ('STATISTICS': [2]) por poligono - Poblacion_1800 #
-        ###########################################################
+############################################################################
+###     Calculamos la media de la variable "Pop_1800" por polígono       ###
+############################################################################
 
         alg_params = {
             'COLUMN_PREFIX': 'pop1800',
@@ -153,10 +160,9 @@ class Modelo3(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
         
-        ###########################################################
-        ###                  Estadísticas de zona               ###
-        # Media ('STATISTICS': [2]) por poligono - Poblacion_1900 #
-        ###########################################################
+############################################################################
+###     Calculamos la media de la variable "Pop_1900" por polígono       ###
+############################################################################
 
         alg_params = {
             'COLUMN_PREFIX': 'pop1900',
@@ -169,6 +175,8 @@ class Modelo3(QgsProcessingAlgorithm):
         outputs['EstadsticasDeZona'] = processing.run('native:zonalstatisticsfb', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Pop1900'] = outputs['EstadsticasDeZona']['OUTPUT']
         return results
+############################################################################
+
 
     def name(self):
         return 'modelo3'
