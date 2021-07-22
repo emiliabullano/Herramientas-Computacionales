@@ -1,28 +1,30 @@
+############################################################################
+############################ MODELO 3 ######################################
+############################################################################
+
 """
 Model exported as python.
 Name : modelo3
 Group : 
 With QGIS : 31608
 """
-############################################################################
-############################ MODELO 3 ######################################
-############################################################################
 
 
 ############################################################################
-###        SE IMPORTAN LOS PAQUETES PARA TRABAJAR QGIS                   ###
+###          Importamos las funciones que vamos a necesitar              ###
 ############################################################################
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterFeatureSink
 import processing
+############################################################################
 
 
-class Modelo3(QgsProcessingAlgorithm):
 ############################################################################
 ###         SE ABREN LAS BASES DE DATOS QUE VAMOS A UTILIZAR             ###
 ############################################################################
+class Modelo3(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFeatureSink('Fixgeo_3', 'fixgeo_3', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('Landq', 'landq', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
@@ -51,12 +53,14 @@ class Modelo3(QgsProcessingAlgorithm):
         }
         outputs['EstadsticasDeZona'] = processing.run('native:zonalstatisticsfb', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Zonalstatistics'] = outputs['EstadsticasDeZona']['OUTPUT']
+        
+         feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
 ############################################################################
 
 
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
+       
 
 
 ############################################################################
