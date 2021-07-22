@@ -1,20 +1,26 @@
+##########################################################################################
+################################          MODELO 2         ###############################
+##########################################################################################
+
 """
 Model exported as python.
 Name : modelo2
 Group : 
 With QGIS : 31608
 """
-##########################################################################################
-################################ MODELO 2 ################################################
-##########################################################################################
 
-############ SE IMPORTAN LOS PAQUETES PARA TRABAJAR EN QGIS ##############
+
+#########################################################################################
+###                   Importamos las funciones que vamos a necesitar                  ###
+#########################################################################################
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterRasterDestination
 from qgis.core import QgsCoordinateReferenceSystem
 import processing
+#########################################################################################
+
 
 # ABRIMOS EL RASTER 
 class Modelo2(QgsProcessingAlgorithm):
@@ -28,9 +34,12 @@ class Modelo2(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
         results = {}
         outputs = {}
+        
 
-        # Combar (reproyectar)
-        # Reproyectamos a WGS84 - Sistema de coordenadas EPSG_4326- ('SOURCE_CRS')
+#########################################################################################
+###                    Usamos la función combar(reproyectar) capa                     ###
+#########################################################################################
+# Reproyectamos a WGS84 - Sistema de coordenadas EPSG_4326- ('SOURCE_CRS')
         alg_params = {
             'DATA_TYPE': 0,
             'EXTRA': '',
@@ -52,14 +61,20 @@ class Modelo2(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Extraer proyección
+
+#########################################################################################
+###                              Extraemos la proyección                              ###
+#########################################################################################
         alg_params = {
             'INPUT': outputs['CombarReproyectar']['OUTPUT'],
             'PRJ_FILE_CREATE': True
         }
         outputs['ExtraerProyeccin'] = processing.run('gdal:extractprojection', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         return results
+#########################################################################################
+
 
     def name(self):
         return 'modelo2'
