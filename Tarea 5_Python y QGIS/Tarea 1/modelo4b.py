@@ -1,3 +1,7 @@
+#########################################################################################
+####################                    Modelo 4B                    ####################
+#########################################################################################
+
 """
 Model exported as python.
 Name : modelo4b
@@ -5,13 +9,17 @@ Group :
 With QGIS : 31415
 """
 
+
+#########################################################################################
+###                   Importamos las funciones que vamos a necesitar                  ###
+#########################################################################################
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterVectorDestination
 from qgis.core import QgsProcessingParameterFeatureSink
 import processing
-
+#########################################################################################
 
 class Modelo4b(QgsProcessingAlgorithm):
 
@@ -45,7 +53,12 @@ class Modelo4b(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Centroides country
+        
+
+#########################################################################################
+###                      Computamos el centroide de cada polígono                     ###
+#########################################################################################
+# Lo hacemos sobre la capa countries (después de haber arreglado su geometría).
         alg_params = {
             'ALL_PARTS': False,
             'INPUT': 'Geometrías_corregidas_a59af566_3211_4476_b187_cae895e03ab0',
@@ -57,8 +70,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos - cat adjust
+
+        
+#########################################################################################
+###                   Corregimos la variable cat de la capa 'nearout'                 ###
+#########################################################################################
+# Creamos una nueva variable cuyo valor es igual al original - 1. 
+# Esto será útil para posteriormente realizar un merge con la capa 'distout'.
         alg_params = {
             'FIELD_LENGTH': 4,
             'FIELD_NAME': 'cat',
@@ -75,8 +95,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Quitar campo(s)
+
+
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Borramos los campos que no vamos a necesitar de la capa 'added_field_coast_lon'.
+# Exportamos la base resultante en formato como 'dist_coast.csv'.
         alg_params = {
             'COLUMN': ['xcoord','ycoord'],
             'INPUT': 'Calculado_10c3704b_2ea3_408f_8f49_c38ac859ed4b',
@@ -88,8 +115,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Quitar campo(s) - nearest_cat_adjust
+
+
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Quitamos los campos ycoord y xcoord de la base nearest_cat_adjust'.
+
         alg_params = {
             'COLUMN': ['xcoord','ycoord'],
             'INPUT': 'Calculado_519ee7a1_13e5_4748_8035_33157fe23239',
@@ -101,8 +135,13 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos - coast_lon
+
+
+#########################################################################################
+###               Creamos un campo igual a 'Xcoord' llamado 'coast_lon'               ###
+#########################################################################################
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'coast_lon',
@@ -119,8 +158,16 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(5)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Corregir geometrías countries
+
+
+#########################################################################################
+###                             Corregimos las geometrías                             ###
+#########################################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
+# En este bloque se corrigen las geometrías de la capa 'ne_10m_admin_0_countries.shp'.
         alg_params = {
             'INPUT': 'E:/Desktop/Emilia/Maestria UdeSA/Herramientas Computacionales/Python y QGIS/ne_10m_admin_0_countries/ne_10m_admin_0_countries.shp',
             'OUTPUT': parameters['Fixgeo_countries']
@@ -131,8 +178,13 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(6)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Extraer vértices
+
+
+#########################################################################################
+###                                 Extraemos vértices                                ###
+#########################################################################################
         alg_params = {
             'INPUT': 'Capa_unida_79075691_4a1f_4f07_bf65_9aa27245e9b6',
             'OUTPUT': parameters['Extract_vertices']
@@ -143,8 +195,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(7)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Quitar campo(s) - cent_lon
+
+
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Quitamos campos de la capa 'added_field_cent_lon'.
+
         alg_params = {
             'COLUMN': ['fid','cat','xcoord','ycoord','fid_2','cat_2','vertex_index','vertex_part','vertex_part','_index','angle'],
             'INPUT': 'Calculado_10c3704b_2ea3_408f_8f49_c38ac859ed4b',
@@ -156,8 +215,13 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(8)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos - coast lat
+
+
+#########################################################################################
+###                Creamos un campo igual a 'ycoord' llamado coast_lat                ###
+#########################################################################################
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'coast_lat',
@@ -174,8 +238,14 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(9)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Extraer por atributo
+        
+
+#########################################################################################
+###                            Extraemos campos por atributo                          ###
+#########################################################################################
+# De la capa 'extract_vertices' extraemos aquellas observaciones para las cuales la distancia es >0.
         alg_params = {
             'FIELD': 'distance',
             'INPUT': 'Vértices_8aa2d582_002d_4d89_9a90_3a16214ceaf4',
@@ -189,8 +259,14 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(10)
         if feedback.isCanceled():
             return {}
+#########################################################################################        
+        
 
-        # Quitar campo(s) - centroid_coast_joined
+    
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Quitamos campos que no vamos a necesitar de la base 'Centroids_nearest_coast_joined'.
         alg_params = {
             'COLUMN': ['ADMIN_2','ISO_A3_2'],
             'INPUT': 'Capa_unida_0c2c3aef_80e6_44d8_a7c3_478fcd86a3c6',
@@ -202,8 +278,14 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(11)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Unir atributos por valor de campo - centroids y coast
+
+        
+#########################################################################################
+###                  Unimos las capas 'centroidsout' y 'nearest_cat_adjust'           ###
+#########################################################################################
+# Usamos la variable 'ISO_A3' para la unión.
         alg_params = {
             'DISCARD_NONMATCHING': False,
             'FIELD': 'ISO_A3',
@@ -221,8 +303,13 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(12)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Agregar atributos de geometría
+        
+        
+#########################################################################################
+###                   Computamos las coordenadas de los centroides                    ###
+#########################################################################################
         alg_params = {
             'CALC_METHOD': 0,
             'INPUT': 'Centroides_53b940af_f546_4b23_bacf_9eefdddec7bc',
@@ -234,8 +321,16 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(13)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Corregir geometrías coast
+
+
+#########################################################################################
+###                             Corregimos las geometrías                             ###
+#########################################################################################
+# Es importante realizar este paso para evitar problemas como polígonos que se superponen
+# o polígonos que no están cerrados.
+# En este bloque se corrigen las geometrías de la capa 'coastline.shp'.
         alg_params = {
             'INPUT': 'E:/Desktop/Emilia/Maestria UdeSA/Herramientas Computacionales/Python y QGIS/ne_10m_coastline/ne_10m_coastline.shp',
             'OUTPUT': parameters['Fixgeo_coast']
@@ -246,8 +341,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(14)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos - lon del centroide
+
+
+#########################################################################################
+###                Creamos un campo igual a 'xcoord' llamado cent_lon                 ###
+#########################################################################################
+# Renombramos la longitud del centroide.
+# Después tenemos que eliminar la variable original.
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'cent_lon',
@@ -264,8 +366,12 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(15)
         if feedback.isCanceled():
             return {}
+#########################################################################################
+        
 
-        # Unir atributos por valor de campo - by cat
+#########################################################################################
+###                   Unimos campos según valor de la variable 'cat'                  ###
+#########################################################################################
         alg_params = {
             'DISCARD_NONMATCHING': False,
             'FIELD': 'cat',
@@ -283,8 +389,13 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(16)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # v.distance
+
+
+#########################################################################################
+###        Calculamos la distancia desde cada centroide a la costa más cercana        ###
+#########################################################################################
         alg_params = {
             'GRASS_MIN_AREA_PARAMETER': 0.0001,
             'GRASS_OUTPUT_TYPE_PARAMETER': 0,
@@ -312,8 +423,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(17)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Calculadora de campos-lat del centroide
+
+
+#########################################################################################
+###                Creamos un campo igual a 'ycoord' llamado cent_lat                 ###
+#########################################################################################
+# Renombramos la longitud del centroide.
+# Después tenemos que eliminar la variable 'ycoord'.
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'cen_lat',
@@ -330,8 +448,14 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(18)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Agregar atributos de geometría
+
+
+#########################################################################################
+###                          Agregamos atributos de geometría                         ###
+#########################################################################################
+# Calculamos las coordenadas del punto de la costa más cercano a cada centroide.
         alg_params = {
             'CALC_METHOD': 0,
             'INPUT': 'Campos_restantes_0e3ec8cc_e927_44c1_8b5d_8b0da749c917',
@@ -343,8 +467,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(19)
         if feedback.isCanceled():
             return {}
+#########################################################################################
+        
+    
+    
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Quitamos algunos campos de la base 'fix_geo_coast' que no vamos a necesitar.
 
-        # Quitar campo(s) coast
         alg_params = {
             'COLUMN': ['scalerank'],
             'INPUT': 'Geometrías_corregidas_292f80e0_2a25_47f5_92a4_f4236bc6af25',
@@ -356,8 +487,15 @@ class Modelo4b(QgsProcessingAlgorithm):
         feedback.setCurrentStep(20)
         if feedback.isCanceled():
             return {}
+#########################################################################################
 
-        # Quitar campo(s) centroid_w_c
+
+
+#########################################################################################
+###                                   Quitamos campos                                 ###
+#########################################################################################
+# Quitamos campos de la capa 'centroids_w_coord' y nos quedamos solo con los que necesitamos.
+
         alg_params = {
             'COLUMN': ['featurecla','scalerank','LABELRANK','SOVEREIGNT','SOV_A3','ADM0_DIF','LEVEL','TYPE','ADM0_A3','GEOU_DIF','GEOUNIT','GU_A3','SU_DIF','SUBUNIT','SU_A3','BRK_DIFF','NAME','NAME_LONG','BRK_A3','BRK_NAME','BRK_GROUP','ABBREV','POSTAL','FORMAL_EN','FORMAL_FR','NAME_CIAWF','NOTE_ADM0','NOTE_BRK','NAME_SORT','NAME_ALT','MAPCOLOR7','MAPCOLOR8','APCOLOR9','MAPCOLOR13','POP_EST','POP_RANK','GDP_MD_EST','POP_YEAR','LASTCENSUS','GDP_YEAR','ECONOMY','INCOME_GRP','WIKIPEDIA','FIPS_10_','ISO_A2','ISO_A3_EH','ISO_N3','UN_A3','WB_A2','WB_A3','WOE_ID','WOE_ID_EH','WOE_NOTE','ADM0_A3_IS','ADM0_A3_US','ADM0_A3_UN','ADM0_A3_WB','CONTINENT','REGION_UN','SUBREGION','REGION_WB','NAME_LEN','LONG_LEN','ABBREV_LEN','TINY','HOMEPART','MIN_ZOOM','MIN_LABEL','MAX_LABEL','NE_ID','WIKIDATAID','NAME_AR','NAME_BN','NAME_DE','NAME_EN','NAME_ES','NAME_FR','NAME_EL','NAME_HI','NAME_HU','NAME_ID','NAME_IT','NAME_JA','NAME_KO','NAME_NL','NAME_PL','NAME_PT','NAME_RU','NAME_SV','NAME_TR','NAME_VI','NAME_ZH','MAPCOLOR9'],
             'INPUT': 'Información_de_geometría_añadida_a7150d8f_443a_4b7b_b8d5_b5594f8de677',
@@ -366,6 +504,8 @@ class Modelo4b(QgsProcessingAlgorithm):
         outputs['QuitarCamposCentroid_w_c'] = processing.run('qgis:deletecolumn', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Centroidsout'] = outputs['QuitarCamposCentroid_w_c']['OUTPUT']
         return results
+#########################################################################################
+
 
     def name(self):
         return 'modelo4b'
