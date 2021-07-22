@@ -1,12 +1,16 @@
 ##########################################################################################
-################################ MODELO 4A ################################################
+##################                      MODELO 4A                       ##################
 ##########################################################################################
+
+
 """
 Model exported as python.
 Name : modelo4a
 Group : 
 With QGIS : 31608
 """
+
+
 #########################################################################################
 ###                   Importamos las funciones que vamos a necesitar                  ###
 #########################################################################################
@@ -32,11 +36,13 @@ class Modelo4a(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        
 #########################################################################################
 ###                             Corregimos las geometrías                             ###
 #########################################################################################
 # Es importante realizar este paso para evitar problemas como polígonos que se superponen
 # o polígonos que no están cerrados.
+# En este bloque se corrigen las geometrías de la base clean.shp, creada en el modelo 1.
         alg_params = {
             'INPUT': 'clean_1e98a9a0_d52b_4791_a02d_53e356ed3b6b',
             'OUTPUT': parameters['Fixgeo_wlds']
@@ -66,12 +72,16 @@ class Modelo4a(QgsProcessingAlgorithm):
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
+#########################################################################################
+
+
 
 #########################################################################################
 ###                             Corregimos las geometrías                             ###
 #########################################################################################
 # Es importante realizar este paso para evitar problemas como polígonos que se superponen
 # o polígonos que no están cerrados.
+# En este bloque se corrigen las geometrías de la base ne.10m.admin.0.countries.shp
         alg_params = {
             'INPUT': 'ne_10m_admin_0_countries_ed83962c_4da8_4d95_bf84_dd5271df5d0f',
             'OUTPUT': parameters['Fixgeo_countries']
@@ -83,7 +93,12 @@ class Modelo4a(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Intersección entre capaz de paises ('OVERLAY') y mundo ('INPUT') para pegar variable ADMIN ('OVERLAY_FIELDS')
+        
+#########################################################################################
+###                      Hacemos la intersección entre dos capas                      ###
+#########################################################################################
+# Después de haber corregido las geometrías, intersectamos las capas ne.10m.admin.0.countries.shp
+# y clean.shp y nos quedamos las variables GID y ADMIN.
         
         alg_params = {
             'INPUT': outputs['CorregirGeometrasWlds']['OUTPUT'],
@@ -96,6 +111,8 @@ class Modelo4a(QgsProcessingAlgorithm):
         outputs['Interseccin'] = processing.run('native:intersection', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Intersection'] = outputs['Interseccin']['OUTPUT']
         return results
+#########################################################################################
+
 
     def name(self):
         return 'modelo4a'
