@@ -123,7 +123,7 @@ alg_params = {
 #########################################################################################
 # nombre de la nueva variable 'FIELD_NAME'
 # Capa sobre la cual realizar la variable 'INPUT'
-# Capa resultado ''OUTPUT
+# Capa resultado 'OUTPUT'
     
     alg_params = {
             'FIELD_LENGTH': 2,
