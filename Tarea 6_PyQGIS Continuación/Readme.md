@@ -4,7 +4,7 @@
 
 ##### __- Mapa con departamentos y rutas de Corrientes__: Mapa_Corrientes.png
 
-##### Para las matrices OD, inicialmente trabajamos con una tolerancia de 10, pero debido a la impresición encontrada decidimos trabajar con tolerancias de 0,1 y 0,01.
+##### Para las matrices OD inicialmente trabajamos con una tolerancia de 10, pero debido a la impresición encontrada decidimos trabajar con tolerancias de 0,1 y 0,01.
 ##### __- Matrices OD__: 
 ###### __- Matriz OD con Tolerancia = 10__: matrizOD_tolerancia10.csv
 ###### __- Matriz OD con Tolerancia = 0,1__: matrizOD_tolerancia0.1.csv
